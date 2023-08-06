@@ -128,8 +128,18 @@ app.post('/User',async(req,res)=>{
       const result=await OrderCollection.find({useremail:query}).toArray();
       res.send(result);
     })
+    app.delete("/Carts/:id",async(req,res)=>{
+      const query=req.params.id;
+      const result=await OrderCollection.deleteOne({_id:new ObjectId(query)});
+      res.send(result);
+    })
     app.get("/CartCollection",async(req,res)=>{
       const result=await OrderCollection.find().toArray();
+      res.send(result);
+    })
+    app.delete("/CartsAll/:id",async(req,res)=>{
+      const query=req.params.id;
+      const result=await OrderCollection.deleteOne({_id:new ObjectId(query)});
       res.send(result);
     })
     // Send a ping to confirm a successful connection
