@@ -116,6 +116,11 @@ app.post('/User',async(req,res)=>{
         const result=await ProductCollection.findOne({_id:new ObjectId(query)})
         res.send(result);
     })
+    app.get("/UserAdmin/:email",async(req,res)=>{
+      const email=req.params.email;
+      const admin=await UserCollection.findOne({email:email})
+      res.send(admin);
+    })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
