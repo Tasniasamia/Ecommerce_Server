@@ -75,7 +75,7 @@ app.post('/Order',async(req,res)=>{
         console.log('Redirecting to: ', GatewayPageURL)
     });
 
-    const orderDBCollection={ orderdata,paidStatus:false,transactionid:tran_id};
+    const orderDBCollection={ ...orderdata,paidStatus:false,transactionid:tran_id};
     const result=await OrderCollection.insertOne(orderDBCollection);
     // res.send(result);
 })
@@ -120,6 +120,17 @@ app.post('/User',async(req,res)=>{
       const email=req.params.email;
       const admin=await UserCollection.findOne({email:email})
       res.send(admin);
+    })
+    
+    app.get("/Cart/:email",async(req,res)=>{
+      const query=req.params.email;
+   
+      const result=await OrderCollection.find({useremail:query}).toArray();
+      res.send(result);
+    })
+    app.get("/CartCollection",async(req,res)=>{
+      const result=await OrderCollection.find().toArray();
+      res.send(result);
     })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
