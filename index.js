@@ -39,8 +39,8 @@ app.post('/Order',async(req,res)=>{
         total_amount: price,
         currency: orderdata.currency,
         tran_id: tran_id, // use unique tran_id for each api call
-        success_url: 'http://localhost:3030/success',
-        fail_url: 'http://localhost:3030/fail',
+        success_url: `http://localhost:6467/payment/success/${tran_id}`,
+        fail_url: `http://localhost:6467/payment/fail/${tran_id}`,
         cancel_url: 'http://localhost:3030/cancel',
         ipn_url: 'http://localhost:3030/ipn',
         shipping_method: 'Courier',
@@ -74,7 +74,30 @@ app.post('/Order',async(req,res)=>{
         console.log('Redirecting to: ', GatewayPageURL)
     });
 
+    const orderDBCollection={ orderdata,paidStatus:false,transactionid:tran_id};
+    const result=await OrderCollection.insertOne(orderDBCollection);
+    // res.send(result);
+})
+app.post('/payment/success/:tran_id',async(req,res)=>{
+    console.log(req.params.tran_id);
+    const updatedata=await OrderCollection.updateOne({transactionid:req.params.tran_id},{
+        $set:{
+            paidStatus:true
+        },
+    })
+
+    if(updatedata.modifiedCount>0){
+        res.redirect(`http://localhost:5173/Payment/Success/${tran_id}`)
+    }
     
+})
+app.post('/Payment/fail/:tran_id',async(req,res)=>{
+    console.log(req.params.id)
+    const deletedata=await OrderCollection.deleteOne({transactionid:req.params.tran_id});
+    if(deletedata.deletedCount>0){
+        res.redirect(`http://localhost:5173/Payment/Fail/${tran_id}`)
+
+    }
 })
     app.get('/Products',async(req,res)=>{
         const result=await ProductCollection.find().toArray();
