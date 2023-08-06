@@ -27,6 +27,7 @@ async function run() {
     const database = client.db("Ecommerce");
     const ProductCollection = database.collection("AllProducts2");
     const OrderCollection = database.collection("Order");
+    const UserCollection=database.collection('UserCollection');
     const tran_id=new ObjectId().toString();
 app.post('/Order',async(req,res)=>{
     const orderdata=req.body;
@@ -98,6 +99,12 @@ app.post('/Payment/fail/:tran_id',async(req,res)=>{
         res.redirect(`http://localhost:5173/Payment/Fail/${tran_id}`)
 
     }
+})
+app.post('/User',async(req,res)=>{
+  const data=req.body;
+  console.log(data);
+  const result=await UserCollection.insertOne(data);
+  res.send(result);
 })
     app.get('/Products',async(req,res)=>{
         const result=await ProductCollection.find().toArray();
