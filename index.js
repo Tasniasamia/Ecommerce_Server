@@ -29,6 +29,11 @@ async function run() {
     const OrderCollection = database.collection("Order");
     const UserCollection=database.collection('UserCollection');
     const tran_id=new ObjectId().toString();
+
+    app.get('/AllProductCollection',async(req,res)=>{
+      const result=await ProductCollection.find().toArray();
+      res.send(result);
+    })
 app.post('/Order',async(req,res)=>{
     const orderdata=req.body;
     const product=await ProductCollection.findOne({_id:new ObjectId(orderdata.productId)});
@@ -40,8 +45,8 @@ app.post('/Order',async(req,res)=>{
         total_amount: price,
         currency: orderdata.currency,
         tran_id: tran_id, // use unique tran_id for each api call
-        success_url: `http://localhost:6467/payment/success/${tran_id}`,
-        fail_url: `http://localhost:6467/payment/fail/${tran_id}`,
+        success_url: `https://ecommerce-6e7b8.web.app/payment/success/${tran_id}`,
+        fail_url: `https://ecommerce-6e7b8.web.app/payment/fail/${tran_id}`,
         cancel_url: 'http://localhost:3030/cancel',
         ipn_url: 'http://localhost:3030/ipn',
         shipping_method: 'Courier',
@@ -88,7 +93,7 @@ app.post('/payment/success/:tran_id',async(req,res)=>{
     })
 
     if(updatedata.modifiedCount>0){
-        res.redirect(`http://localhost:5173/Payment/Success/${tran_id}`)
+        res.redirect(`https://ecommerce-6e7b8.web.app/Payment/Success/${tran_id}`)
     }
     
 })
@@ -96,7 +101,7 @@ app.post('/Payment/fail/:tran_id',async(req,res)=>{
     console.log(req.params.id)
     const deletedata=await OrderCollection.deleteOne({transactionid:req.params.tran_id});
     if(deletedata.deletedCount>0){
-        res.redirect(`http://localhost:5173/Payment/Fail/${tran_id}`)
+        res.redirect(`https://ecommerce-6e7b8.web.app/Payment/Fail/${tran_id}`)
 
     }
 })
